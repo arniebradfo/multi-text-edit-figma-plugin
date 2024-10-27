@@ -1,0 +1,27 @@
+
+  <textarea id="textArea"></textarea>
+  <button id="editButton">Edit Text</button>
+  <button id="pullButton">Pull Text</button>
+
+<script>
+
+  const textArea = document.getElementById('textArea')
+  const editButton = document.getElementById('editButton')
+  const pullButton = document.getElementById('pullButton')
+
+  editButton.onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'editText', value: textArea.value } }, '*')
+  }
+
+  pullButton.onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'pullText' } }, '*')
+  }
+
+  onmessage = (event) => {
+    // console.log(event);
+    
+    textArea.value = event.data.pluginMessage || 'broken'
+    // console.log("got this from the plugin code", event.data.pluginMessage)
+  }
+
+</script>
