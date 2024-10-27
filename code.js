@@ -5,8 +5,18 @@
 // the *figma document* via the figma global object.
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
 // full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
+const state = {
+    height: 500,
+    width: 500,
+    dragX: 0,
+    dragY: 0,
+};
 // This shows the HTML page in "ui.html".
-figma.showUI(__html__, { themeColors: true });
+figma.showUI(__html__, {
+    themeColors: true,
+    height: state.height,
+    width: state.width,
+});
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
@@ -31,6 +41,17 @@ figma.ui.onmessage = (pluginMessage) => {
     else if (pluginMessage.type === "pullText") {
         // console.log(figma.currentPage.selection);
         figma.ui.postMessage("this is pulled from the file");
+    }
+    else if (pluginMessage.type === "resizeWindow") {
+        console.log(pluginMessage.dimensions, state);
+        const { x, y } = pluginMessage.dimensions;
+        state.dragX = x;
+        state.dragY = y;
+        figma.ui.resize(state.width + state.dragX, state.height + state.dragY);
+    }
+    else if (pluginMessage.type === "endResizeWindow") {
+        state.width = state.width + state.dragX;
+        state.height = state.height + state.dragY;
     }
     // Make sure to close the plugin when you're done. Otherwise the plugin will
     // keep running, which shows the cancel button at the bottom of the screen.
