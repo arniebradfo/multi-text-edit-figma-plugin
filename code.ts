@@ -7,8 +7,8 @@
 // full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
 
 const state = {
-  height: 500,
-  width: 500,
+  height: 360,
+  width: 220,
   dragX: 0,
   dragY: 0,
 };

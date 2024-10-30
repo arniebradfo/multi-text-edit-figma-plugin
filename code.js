@@ -15,8 +15,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
 // full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
 const state = {
-    height: 500,
-    width: 500,
+    height: 360,
+    width: 220,
     dragX: 0,
     dragY: 0,
 };
