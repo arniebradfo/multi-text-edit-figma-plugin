@@ -1,10 +1,10 @@
 <main id="root">
-  <textarea id="textArea"></textarea>
+  <textarea id="textArea" autofocus placeholder="one\ntwo\nthree"></textarea>
   <div id="bottomBar">
-    <button id="editButton">Edit Text</button>
+    <button id="editButton">Update Text</button>
     <button id="pullButton">Pull Text</button>
     <div class="flexSplit"></div>
-    <div id="resizeHandle">drag</div>
+    <div id="resizeHandle">⋮⋮⋮</div>
   </div>
 </main>
 
@@ -14,6 +14,8 @@
   const editButton = document.getElementById('editButton')
   const pullButton = document.getElementById('pullButton')
   const resizeHandle = document.getElementById('resizeHandle')
+
+  textArea.placeholder = 'one\ntwo\nthree'
 
   editButton.onclick = () => {
     parent.postMessage({ pluginMessage: { type: 'editText', value: textArea.value } }, '*')
@@ -107,16 +109,19 @@
     font-size: var(--text-body-medium-font-size);
     color: var(--figma-color-text);
 
-
     display: flex;
     overflow: hidden;
     flex-direction: column;
-    padding: var(--spacer-3);
-    gap: var(--spacer-3);
+    padding: 12px;
+    gap: var(--spacer-2);
+
+    position: relative;
   }
 
   #bottomBar {
     display: flex;
+    flex: 0 0 auto;
+    gap: 6px;
   }
 
   .flexSplit {
@@ -137,9 +142,59 @@
     border: 1px solid var(--figma-color-bg-secondary);
     color: inherit;
 
+    font-family: inherit;
+
+    padding: 6px;
+
+  }
+
+  textarea:hover{
+    border-color: var(--figma-color-border);
   }
 
   textarea:focus {
     border-color: var(--figma-color-border-selected);
+  }
+
+  button{
+    /* appearance: none; */
+    cursor: pointer;
+
+    border: 1px solid var(--figma-color-border);
+    background-color: transparent;
+
+    font-size: inherit;
+    color: inherit;
+    font-family: inherit;
+
+    font-weight: var(--font-weight-strong);
+
+    height: var(--spacer-4);
+    border-radius: var(--radius-medium);
+
+    color: var(--figma-color-text-secondary);
+
+    outline: none;
+
+  }
+
+  button:hover{
+    background-color: var(--figma-color-bg-secondary);
+    color: var(--figma-color-text);
+  }
+
+  button:focus {
+    border-color: var(--figma-color-border-selected);
+    background-color: var(--figma-color-bg-secondary);
+    color: var(--figma-color-text);
+  }
+
+  #resizeHandle{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    cursor: nwse-resize;
+    padding: 4px 6px;
+    color: var(--figma-color-border);
   }
 </style>
