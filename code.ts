@@ -20,6 +20,8 @@ const state: {
   sortOrder: "y",
 };
 
+// TODO: persist and restore state?
+
 // This shows the HTML page in "ui.html".
 figma.showUI(__html__, {
   themeColors: true,

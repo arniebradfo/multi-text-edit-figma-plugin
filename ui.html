@@ -1,7 +1,7 @@
 <main id="root">
   <textarea id="textArea"></textarea>
   <div id="bottomBar">
-    <button id="editButton">Update Text</button>
+    <button id="editButton" class="primary">Update Text</button>
     <button id="pullButton">Pull Text</button>
     <div class="flexSplit"></div>
     <select id="sortSelect">
@@ -26,6 +26,8 @@
   editButton.onclick = () => {
     parent.postMessage({ pluginMessage: { type: 'editText', value: textArea.value } }, '*')
   }
+
+  // ctrl+return to submit
 
   pullButton.onclick = () => {
     parent.postMessage({ pluginMessage: { type: 'pullText', value: textArea.value } }, '*')
@@ -225,6 +227,17 @@
     border-color: var(--figma-color-border-selected);
     background-color: var(--figma-color-bg-secondary);
     color: var(--figma-color-text);
+  }
+
+  button.primary {
+    background-color: var(--figma-color-bg-brand);
+    color: var(--figma-color-text);
+  }
+  button.primary:hover {
+    background-color: var(--figma-color-bg-brand-hover);
+  }
+  button.primary:active {
+    background-color: var(--figma-color-bg-brand-pressed);
   }
 
   #resizeHandle {
