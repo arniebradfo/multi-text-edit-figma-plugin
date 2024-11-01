@@ -60,14 +60,15 @@
   });
 
   onmessage = (event) => {
-
     const { pluginMessage } = event.data
     if (!pluginMessage) return
 
     if (pluginMessage.type === 'updateSort') {
       sortSelect.value = pluginMessage.value
     } else if (pluginMessage.type === 'pullText') {
-      textArea.value = pluginMessage.value
+      if (pluginMessage.value) {
+        textArea.value = pluginMessage.value
+      }
     }
   }
 

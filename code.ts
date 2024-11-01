@@ -34,6 +34,11 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   if (pluginMessage.type === "editText") {
+    if (figma.currentPage.selection.length === 0) {
+      figma.notify("Select text elements to Update Text");
+      return
+    }
+
     const textAreaLines = pluginMessage.value.split("\n").reverse();
     [...figma.currentPage.selection]
       .sort(sortNodesXYZ)
@@ -53,6 +58,10 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
       });
   } else if (pluginMessage.type === "pullText") {
     let textAreaValue = "";
+    if (figma.currentPage.selection.length === 0) {
+      figma.notify("Select text elements to Pull Text from");
+      return
+    }
     [...figma.currentPage.selection]
       .sort(sortNodesXYZ) //
       .forEach((node) => {
@@ -66,7 +75,6 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
       value: textAreaValue,
     } as PluginMessageType);
   } else if (pluginMessage.type === "resizeWindow") {
-
     const { x, y } = pluginMessage.dimensions;
     state.dragX = x;
     state.dragY = y;
@@ -76,6 +84,8 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
     state.height = state.height + state.dragY;
   } else if (pluginMessage.type === "updateSort") {
     state.sortOrder = pluginMessage.value;
+  } else if (pluginMessage.type === "notify") {
+    figma.notify(pluginMessage.value);
   }
   // Make sure to close the plugin when you're done. Otherwise the plugin will
   // keep running, which shows the cancel button at the bottom of the screen.
@@ -93,6 +103,7 @@ type PluginMessageType =
   | { type: "editText"; value: string }
   | { type: "pullText"; value: string }
   | { type: "updateSort"; value: SortOrder }
+  | { type: "notify"; value: string }
   | { type: "endResizeWindow" }
   | { type: "resizeWindow"; dimensions: { x: number; y: number } };
 
