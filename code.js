@@ -41,6 +41,17 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
         }
         const textAreaLines = pluginMessage.value.split("\n").reverse();
         [...figma.currentPage.selection]
+            .map((node) => {
+            let currentNode = node;
+            const indexTree = [];
+            while (currentNode.parent != null) {
+                const index = currentNode.parent.children.indexOf(currentNode);
+                indexTree.push(index);
+                currentNode = currentNode.parent;
+            }
+            node.setPluginData("indexTree", indexTree.reverse().join(","));
+            return node;
+        })
             .sort(sortNodesXYZ)
             .forEach((node) => __awaiter(void 0, void 0, void 0, function* () {
             if (node.type === "TEXT" && textAreaLines.length > 0) {
@@ -110,12 +121,17 @@ const sortNodesXYZ = (nodeA, nodeB) => {
         return -1;
     const { y: aY, x: aX } = nodeA.absoluteBoundingBox;
     const { y: bY, x: bX } = nodeB.absoluteBoundingBox;
+    const [zIA, zIB] = [nodeA, nodeB].map((node) => node
+        .getPluginData("indexTree")
+        .split(",")
+        .map((n) => parseInt(n)));
+    console.log({ zIA, zIB });
+    // TODO: loop compare zIA, zIB
     // const aZ = 0;
     // const bZ = 0;
     const x = aX - bX;
     const y = aY - bY;
     // const z = aZ - bZ;
-    Math.sign;
     switch (state.sortOrder) {
         case "x":
             return x || y;
