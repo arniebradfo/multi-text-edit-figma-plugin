@@ -110,21 +110,22 @@ const sortNodesXYZ = (nodeA, nodeB) => {
         return -1;
     const { y: aY, x: aX } = nodeA.absoluteBoundingBox;
     const { y: bY, x: bX } = nodeB.absoluteBoundingBox;
-    const aZ = 0;
-    const bZ = 0;
+    // const aZ = 0;
+    // const bZ = 0;
     const x = aX - bX;
     const y = aY - bY;
-    const z = aZ - bZ;
+    // const z = aZ - bZ;
+    Math.sign;
     switch (state.sortOrder) {
         case "x":
-            return z || y || x;
+            return x || y;
             break;
         case "y":
-            return z || x || y;
+            return y || x;
             break;
-        case "z":
-            return x || y || z;
-            break;
+        // case "z":
+        //   return x || y || z;
+        //   break;
         default:
             return 0;
     }
