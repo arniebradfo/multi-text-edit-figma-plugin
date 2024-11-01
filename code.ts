@@ -116,6 +116,7 @@ const sortNodesXYZ: Parameters<Array<SceneNode>["sort"]>[0] = (
 ) => {
   if (nodeA.absoluteBoundingBox == null) return 1;
   if (nodeB.absoluteBoundingBox == null) return -1;
+
   const { y: aY, x: aX } = nodeA.absoluteBoundingBox;
   const { y: bY, x: bX } = nodeB.absoluteBoundingBox;
   const aZ = 0;
