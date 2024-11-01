@@ -41,34 +41,7 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
     console.log(state);
 
     [...figma.currentPage.selection]
-      .sort((nodeA, nodeB) => {
-        if (nodeA.absoluteBoundingBox == null) return 1;
-        if (nodeB.absoluteBoundingBox == null) return -1;
-        const { y: aY, x: aX } = nodeA.absoluteBoundingBox;
-        const { y: bY, x: bX } = nodeB.absoluteBoundingBox;
-        const aZ = 0;
-        const bZ = 0;
-
-        const x = aX - bX;
-        const y = aY - bY;
-        const z = aZ - bZ;
-
-        switch (state.sortOrder) {
-          case "x":
-            return z || y || x;
-            break;
-          case "y":
-            return z || x || y;
-            break;
-          case "z":
-            return x || y || z;
-            break;
-          default:
-            return 0;
-        }
-
-        // return nodeA.y - nodeB.y || nodeA.x - nodeB.x;
-      })
+      .sort(sortNodesXYZ)
       .forEach(async (node) => {
         if (node.type === "TEXT" && textAreaLines.length > 0) {
           const textAreaLine = textAreaLines.pop();
@@ -93,12 +66,14 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
   } else if (pluginMessage.type === "pullText") {
     console.log(figma.currentPage.selection);
     let textAreaValue = "";
-    figma.currentPage.selection.forEach((node) => {
-      if (node.type === "TEXT") {
-        // || node.type === 'SHAPE_WITH_TEXT') {
-        textAreaValue += node.characters + "\n";
-      }
-    });
+    [...figma.currentPage.selection]
+      .sort(sortNodesXYZ) //
+      .forEach((node) => {
+        if (node.type === "TEXT") {
+          // || node.type === 'SHAPE_WITH_TEXT') {
+          textAreaValue += node.characters + "\n";
+        }
+      });
     figma.ui.postMessage({
       type: "pullText",
       value: textAreaValue,
@@ -134,3 +109,35 @@ type PluginMessageType =
   | { type: "updateSort"; value: SortOrder }
   | { type: "endResizeWindow" }
   | { type: "resizeWindow"; dimensions: { x: number; y: number } };
+
+const sortNodesXYZ: Parameters<Array<SceneNode>["sort"]>[0] = (
+  nodeA,
+  nodeB
+) => {
+  if (nodeA.absoluteBoundingBox == null) return 1;
+  if (nodeB.absoluteBoundingBox == null) return -1;
+  const { y: aY, x: aX } = nodeA.absoluteBoundingBox;
+  const { y: bY, x: bX } = nodeB.absoluteBoundingBox;
+  const aZ = 0;
+  const bZ = 0;
+
+  const x = aX - bX;
+  const y = aY - bY;
+  const z = aZ - bZ;
+
+  switch (state.sortOrder) {
+    case "x":
+      return z || y || x;
+      break;
+    case "y":
+      return z || x || y;
+      break;
+    case "z":
+      return x || y || z;
+      break;
+    default:
+      return 0;
+  }
+
+  // return nodeA.y - nodeB.y || nodeA.x - nodeB.x;
+};
