@@ -4,6 +4,11 @@
     <button id="editButton">Update Text</button>
     <button id="pullButton">Pull Text</button>
     <div class="flexSplit"></div>
+    <select id="sortSelect">
+      <option value="x">Left to Right (X)</option>
+      <option value="y" selected>Top to Bottom (Y)</option>
+      <option value="z">Layer Order (Z)</option>
+    </select>
     <div id="resizeHandle">⋮⋮⋮</div>
   </div>
 </main>
@@ -14,6 +19,7 @@
   const editButton = document.getElementById('editButton')
   const pullButton = document.getElementById('pullButton')
   const resizeHandle = document.getElementById('resizeHandle')
+  const sortSelect = document.getElementById('sortSelect')
 
   textArea.placeholder = 'one\ntwo\nthree'
 
@@ -89,6 +95,15 @@
     --text-body-medium-strong-font-weight: var(--font-weight-strong);
     --text-body-medium-strong-letter-spacing: .00344rem;
     --text-body-medium-strong-line-height: 1rem;
+
+  }
+
+  .figma-dark {
+    --select-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='16' height='16' fill='none' viewBox='0 0 16 16'><path fill='white' fill-rule='evenodd' d='M10.475 6.768a.5.5 0 0 1 0 .707L8.354 9.596 8 9.95l-.354-.354-2.12-2.121a.5.5 0 0 1 .706-.707L8 8.536l1.768-1.768a.5.5 0 0 1 .707 0' clip-rule='evenodd'></path></svg>");
+  }
+
+  .figma-light {
+    --select-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='16' height='16' fill='none' viewBox='0 0 16 16'><path fill='black' fill-rule='evenodd' d='M10.475 6.768a.5.5 0 0 1 0 .707L8.354 9.596 8 9.95l-.354-.354-2.12-2.121a.5.5 0 0 1 .706-.707L8 8.536l1.768-1.768a.5.5 0 0 1 .707 0' clip-rule='evenodd'></path></svg>");
   }
 
   #root,
@@ -148,7 +163,7 @@
 
   }
 
-  textarea:hover{
+  textarea:hover {
     border-color: var(--figma-color-border);
   }
 
@@ -156,12 +171,13 @@
     border-color: var(--figma-color-border-selected);
   }
 
-  button{
-    /* appearance: none; */
+  button,
+  select {
+    appearance: none;
     cursor: pointer;
 
     border: 1px solid var(--figma-color-border);
-    background-color: transparent;
+    background-color: var(--figma-color-bg);
 
     font-size: inherit;
     color: inherit;
@@ -173,23 +189,37 @@
     border-radius: var(--radius-medium);
 
     color: var(--figma-color-text-secondary);
-
     outline: none;
+
+    padding: 0 8px;
 
   }
 
-  button:hover{
+  select {
+    font-weight: var(--font-weight-default);
+
+    background-image: var(--select-icon);
+    background-position: right 4px center;
+    background-repeat: no-repeat;
+    background-size: auto;
+    box-sizing: border-box;
+    padding-right: 22px;
+  }
+
+  button:hover,
+  select:hover {
     background-color: var(--figma-color-bg-secondary);
     color: var(--figma-color-text);
   }
 
-  button:focus {
+  button:focus,
+  select:focus {
     border-color: var(--figma-color-border-selected);
     background-color: var(--figma-color-bg-secondary);
     color: var(--figma-color-text);
   }
 
-  #resizeHandle{
+  #resizeHandle {
     position: absolute;
     bottom: 0;
     right: 0;

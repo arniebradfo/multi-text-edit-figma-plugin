@@ -8,7 +8,7 @@
 
 const state = {
   height: 360,
-  width: 220,
+  width: 360,
   dragX: 0,
   dragY: 0,
 };

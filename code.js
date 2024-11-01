@@ -16,7 +16,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 // full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
 const state = {
     height: 360,
-    width: 220,
+    width: 360,
     dragX: 0,
     dragY: 0,
 };
