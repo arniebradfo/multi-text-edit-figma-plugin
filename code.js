@@ -19,6 +19,7 @@ const state = {
     width: 360,
     dragX: 0,
     dragY: 0,
+    sortOrder: "y",
 };
 // This shows the HTML page in "ui.html".
 figma.showUI(__html__, {
@@ -35,6 +36,7 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
     if (pluginMessage.type === "editText") {
         console.log(pluginMessage.value);
         const textAreaLines = pluginMessage.value.split("\n").reverse();
+        console.log(state);
         [...figma.currentPage.selection]
             .sort((nodeA, nodeB) => {
             if (nodeA.absoluteBoundingBox == null)
@@ -43,7 +45,24 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
                 return -1;
             const { y: aY, x: aX } = nodeA.absoluteBoundingBox;
             const { y: bY, x: bX } = nodeB.absoluteBoundingBox;
-            return aY - bY || aX - bX;
+            const aZ = 0;
+            const bZ = 0;
+            const x = aX - bX;
+            const y = aY - bY;
+            const z = aZ - bZ;
+            switch (state.sortOrder) {
+                case "x":
+                    return z || y || x;
+                    break;
+                case "y":
+                    return z || x || y;
+                    break;
+                case "z":
+                    return x || y || z;
+                    break;
+                default:
+                    return 0;
+            }
             // return nodeA.y - nodeB.y || nodeA.x - nodeB.x;
         })
             .forEach((node) => __awaiter(void 0, void 0, void 0, function* () {
@@ -54,14 +73,12 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
                     x: (_a = node.absoluteBoundingBox) === null || _a === void 0 ? void 0 : _a.x,
                     y: (_b = node.absoluteBoundingBox) === null || _b === void 0 ? void 0 : _b.y,
                     text: node.characters,
-                    textAreaLine
+                    textAreaLine,
                 });
                 if (textAreaLine) {
                     yield Promise.all(node
                         .getRangeAllFontNames(0, node.characters.length)
                         .map(figma.loadFontAsync));
-                    // node.deleteCharacters(0, node.characters.length - 1)
-                    // node.insertCharacters(0, textAreaLine)
                     // Setting this property requires the font the be loaded.
                     node.characters = textAreaLine;
                 }
@@ -77,7 +94,10 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
                 textAreaValue += node.characters + "\n";
             }
         });
-        figma.ui.postMessage(textAreaValue);
+        figma.ui.postMessage({
+            type: "pullText",
+            value: textAreaValue,
+        });
     }
     else if (pluginMessage.type === "resizeWindow") {
         console.log(pluginMessage.dimensions, state);
@@ -90,7 +110,14 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
         state.width = state.width + state.dragX;
         state.height = state.height + state.dragY;
     }
+    else if (pluginMessage.type === "updateSort") {
+        state.sortOrder = pluginMessage.value;
+    }
     // Make sure to close the plugin when you're done. Otherwise the plugin will
     // keep running, which shows the cancel button at the bottom of the screen.
     // figma.closePlugin();
+});
+figma.ui.postMessage({
+    type: "updateSort",
+    value: state.sortOrder,
 });
