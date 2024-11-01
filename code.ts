@@ -9,14 +9,14 @@
 const state: {
   height: number;
   width: number;
-  dragX: number;
-  dragY: number;
+  dragStart: XY;
+  dragDelta: XY;
   sortOrder: SortOrder;
 } = {
   height: 360,
   width: 360,
-  dragX: 0,
-  dragY: 0,
+  dragStart: { x: 0, y: 0 },
+  dragDelta: { x: 0, y: 0 },
   sortOrder: "y",
 };
 
@@ -36,7 +36,7 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
   if (pluginMessage.type === "editText") {
     if (figma.currentPage.selection.length === 0) {
       figma.notify("Select text elements to Update Text");
-      return
+      return;
     }
 
     const textAreaLines = pluginMessage.value.split("\n").reverse();
@@ -60,7 +60,7 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
     let textAreaValue = "";
     if (figma.currentPage.selection.length === 0) {
       figma.notify("Select text elements to Pull Text from");
-      return
+      return;
     }
     [...figma.currentPage.selection]
       .sort(sortNodesXYZ) //
@@ -74,14 +74,21 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
       type: "pullText",
       value: textAreaValue,
     } as PluginMessageType);
+  } else if (pluginMessage.type === "startResizeWindow") {
+    state.dragStart = pluginMessage.xy;
   } else if (pluginMessage.type === "resizeWindow") {
-    const { x, y } = pluginMessage.dimensions;
-    state.dragX = x;
-    state.dragY = y;
-    figma.ui.resize(state.width + state.dragX, state.height + state.dragY);
+    const { x, y } = pluginMessage.xy;
+    state.dragDelta = {
+      x: x - state.dragStart.x,
+      y: y - state.dragStart.y,
+    };
+    figma.ui.resize(
+      state.width + state.dragDelta.x,
+      state.height + state.dragDelta.y
+    );
   } else if (pluginMessage.type === "endResizeWindow") {
-    state.width = state.width + state.dragX;
-    state.height = state.height + state.dragY;
+    state.width = state.width + state.dragDelta.x;
+    state.height = state.height + state.dragDelta.y;
   } else if (pluginMessage.type === "updateSort") {
     state.sortOrder = pluginMessage.value;
   } else if (pluginMessage.type === "notify") {
@@ -104,8 +111,9 @@ type PluginMessageType =
   | { type: "pullText"; value: string }
   | { type: "updateSort"; value: SortOrder }
   | { type: "notify"; value: string }
-  | { type: "endResizeWindow" }
-  | { type: "resizeWindow"; dimensions: { x: number; y: number } };
+  | { type: "endResizeWindow"; xy: XY }
+  | { type: "startResizeWindow"; xy: XY }
+  | { type: "resizeWindow"; xy: XY };
 
 const sortNodesXYZ: Parameters<Array<SceneNode>["sort"]>[0] = (
   nodeA,
@@ -139,3 +147,5 @@ const sortNodesXYZ: Parameters<Array<SceneNode>["sort"]>[0] = (
 
   // return nodeA.y - nodeB.y || nodeA.x - nodeB.x;
 };
+
+type XY = { x: number; y: number };

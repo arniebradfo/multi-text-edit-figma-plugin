@@ -17,8 +17,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const state = {
     height: 360,
     width: 360,
-    dragX: 0,
-    dragY: 0,
+    dragStart: { x: 0, y: 0 },
+    dragDelta: { x: 0, y: 0 },
     sortOrder: "y",
 };
 // This shows the HTML page in "ui.html".
@@ -73,15 +73,20 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
             value: textAreaValue,
         });
     }
+    else if (pluginMessage.type === "startResizeWindow") {
+        state.dragStart = pluginMessage.xy;
+    }
     else if (pluginMessage.type === "resizeWindow") {
-        const { x, y } = pluginMessage.dimensions;
-        state.dragX = x;
-        state.dragY = y;
-        figma.ui.resize(state.width + state.dragX, state.height + state.dragY);
+        const { x, y } = pluginMessage.xy;
+        state.dragDelta = {
+            x: x - state.dragStart.x,
+            y: y - state.dragStart.y,
+        };
+        figma.ui.resize(state.width + state.dragDelta.x, state.height + state.dragDelta.y);
     }
     else if (pluginMessage.type === "endResizeWindow") {
-        state.width = state.width + state.dragX;
-        state.height = state.height + state.dragY;
+        state.width = state.width + state.dragDelta.x;
+        state.height = state.height + state.dragDelta.y;
     }
     else if (pluginMessage.type === "updateSort") {
         state.sortOrder = pluginMessage.value;
