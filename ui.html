@@ -21,7 +21,7 @@
   const resizeHandle = document.getElementById('resizeHandle')
   const sortSelect = document.getElementById('sortSelect')
 
-  textArea.placeholder = 'one\ntwo\nthree'
+  textArea.placeholder = 'Lorem\nIpsum\nAmet\nDolor'
 
   editButton.onclick = () => {
     parent.postMessage({ pluginMessage: { type: 'editText', value: textArea.value } }, '*')
@@ -147,6 +147,7 @@
     display: flex;
     flex: 0 0 auto;
     gap: 6px;
+    flex-wrap: wrap;
   }
 
   .flexSplit {
