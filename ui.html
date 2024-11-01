@@ -60,12 +60,10 @@
   });
 
   onmessage = (event) => {
-    // console.log(event);
 
     const { pluginMessage } = event.data
     if (!pluginMessage) return
 
-    console.log(pluginMessage.value);
     if (pluginMessage.type === 'updateSort') {
       sortSelect.value = pluginMessage.value
     } else if (pluginMessage.type === 'pullText') {

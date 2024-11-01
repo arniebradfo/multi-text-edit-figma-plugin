@@ -34,24 +34,12 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   if (pluginMessage.type === "editText") {
-    console.log(pluginMessage.value);
-
     const textAreaLines = pluginMessage.value.split("\n").reverse();
-
-    console.log(state);
-
     [...figma.currentPage.selection]
       .sort(sortNodesXYZ)
       .forEach(async (node) => {
         if (node.type === "TEXT" && textAreaLines.length > 0) {
           const textAreaLine = textAreaLines.pop();
-          console.log({
-            x: node.absoluteBoundingBox?.x,
-            y: node.absoluteBoundingBox?.y,
-            text: node.characters,
-            textAreaLine,
-          });
-
           if (textAreaLine) {
             await Promise.all(
               node
@@ -64,7 +52,6 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
         }
       });
   } else if (pluginMessage.type === "pullText") {
-    console.log(figma.currentPage.selection);
     let textAreaValue = "";
     [...figma.currentPage.selection]
       .sort(sortNodesXYZ) //
@@ -79,7 +66,6 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
       value: textAreaValue,
     } as PluginMessageType);
   } else if (pluginMessage.type === "resizeWindow") {
-    console.log(pluginMessage.dimensions, state);
 
     const { x, y } = pluginMessage.dimensions;
     state.dragX = x;
