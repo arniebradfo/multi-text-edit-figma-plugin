@@ -7,3 +7,4 @@
 - warn when no text nodes selected (count non-text nodes)
 - sort by z-order
 - dark/light theme scrollbar
+- `Parameters<Array<SceneNode>["sort"]>[0]` defined type
