@@ -99,9 +99,6 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
   } else if (pluginMessage.type === "notify") {
     figma.notify(pluginMessage.value);
   }
-  // Make sure to close the plugin when you're done. Otherwise the plugin will
-  // keep running, which shows the cancel button at the bottom of the screen.
-  // figma.closePlugin();
 };
 
 figma.ui.postMessage({
@@ -145,8 +142,6 @@ const sortNodesXYZ: Parameters<Array<SceneNode>["sort"]>[0] = (
     default:
       return 0;
   }
-
-  // return nodeA.y - nodeB.y || nodeA.x - nodeB.x;
 };
 
 type XY = { x: number; y: number };
@@ -165,38 +160,51 @@ const getNodeIndexTree = (node: SceneNode) => {
   let data = node.getPluginData(indexTreeKey);
 
   if (data === "") {
-    let currentNode = node;
-    const indexTree: number[] = [];
-    while (currentNode.parent != null) {
-      const index = currentNode.parent.children.indexOf(currentNode);
-      indexTree.push(index);
-      currentNode = currentNode.parent as SceneNode;
-    }
-    data = indexTree.reverse().join(",");
-    node.setPluginData(indexTreeKey, data);
+    data = setNodeIndexTree(node);
   }
 
   return data.split(",").map((n) => parseInt(n));
 };
 
+/**
+ * sets pluginData of "indexTree" for Layer Order z index sorting
+ * - data is array of index position in parent, starting with node and moving up to root node
+ * - ex: [nodeIndexInParent, parentIndexInGrandparent, ..., ancestorIndexInRootNode]
+ */
+const setNodeIndexTree = (node: SceneNode) => {
+  let currentNode = node;
+  const indexTree: number[] = [];
+  while (currentNode.parent != null) {
+    const index = currentNode.parent.children.indexOf(currentNode);
+    indexTree.push(index);
+    currentNode = currentNode.parent as SceneNode;
+  }
+  const value = indexTree.join(",");
+  node.setPluginData(indexTreeKey, value);
+  return value;
+};
+
 const sortNodesZ: Parameters<Array<SceneNode>["sort"]>[0] = (nodeA, nodeB) => {
   let z = 0;
 
-  const [zIA, zIB] = [nodeA, nodeB].map(getNodeIndexTree);
+  let [zIA, zIB] = [nodeA, nodeB].map(getNodeIndexTree);
+  const minLength = Math.min(zIA.length, zIB.length);
+  [zIA, zIB] = [zIA, zIB].map((node) => node.slice(-minLength));
 
   while (z === 0 && zIA.length > 0 && zIB.length > 0) {
-    const zA = zIA.shift();
-    const zB = zIB.shift();
-    z = zA != null && zB != null ? zA - zB : -Infinity;
+    //.pop() is never undefined because length is checked in while()
+    const zA = zIA.pop()!;
+    const zB = zIB.pop()!;
+    z = zA - zB;
   }
 
-  console.log({
+  /* console.log({
     zIA: zIA.join(","),
     zIB: zIB.join(","),
     a: (nodeA as TextNode).characters,
     b: (nodeB as TextNode).characters,
     z,
-  });
+  }); */
 
   return z;
 };
