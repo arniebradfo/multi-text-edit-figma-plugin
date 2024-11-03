@@ -27,7 +27,11 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
             figma.notify("Select text elements to Update Text");
             return;
         }
-        const textAreaLines = pluginMessage.value.split("\n").reverse();
+        const textAreaLines = pluginMessage.value
+            .trim() //.trimEnd()
+            .split("\n")
+            .map((s) => s || " ") // empty line becomes empty text element, not skip...
+            .reverse();
         [...figma.currentPage.selection]
             .sort(sortNodesXYZ)
             .forEach((node) => __awaiter(void 0, void 0, void 0, function* () {
@@ -55,13 +59,13 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
             .forEach((node) => {
             deleteNodeIndexTree(node);
             if (node.type === "TEXT") {
-                // || node.type === 'SHAPE_WITH_TEXT') {
+                // || node.type === 'SHAPE_WITH_TEXT')
                 textAreaValue += node.characters + "\n";
             }
         });
         figma.ui.postMessage({
             type: "pullText",
-            value: textAreaValue || debugTextAreaValue,
+            value: textAreaValue.trim() || debugTextAreaValue,
         });
     }
     else if (pluginMessage.type === "startResizeWindow") {

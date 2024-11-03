@@ -26,7 +26,11 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
       return;
     }
 
-    const textAreaLines = pluginMessage.value.split("\n").reverse();
+    const textAreaLines = pluginMessage.value
+      .trim() //.trimEnd()
+      .split("\n")
+      .map((s) => s || " ") // empty line becomes empty text element, not skip...
+      .reverse();
 
     [...figma.currentPage.selection]
       .sort(sortNodesXYZ)
@@ -47,22 +51,25 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
       });
   } else if (pluginMessage.type === "pullText") {
     let textAreaValue = "";
+
     if (figma.currentPage.selection.length === 0) {
       figma.notify("Select text elements to Pull Text from");
       return;
     }
+
     [...figma.currentPage.selection]
       .sort(sortNodesXYZ) //
       .forEach((node) => {
         deleteNodeIndexTree(node);
         if (node.type === "TEXT") {
-          // || node.type === 'SHAPE_WITH_TEXT') {
+          // || node.type === 'SHAPE_WITH_TEXT')
           textAreaValue += node.characters + "\n";
         }
       });
+
     figma.ui.postMessage({
       type: "pullText",
-      value: textAreaValue || debugTextAreaValue,
+      value: textAreaValue.trim() || debugTextAreaValue,
     } as PluginMessageType);
   } else if (pluginMessage.type === "startResizeWindow") {
     state.dragStart = pluginMessage.xy;

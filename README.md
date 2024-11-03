@@ -1,10 +1,15 @@
+# Multi Text Editor
+Edit multiple text elements in a single text editor.
+
+## Functionality
+- Each return line is a line
+
 ## TODOs
-- better sorting logic
-- register undo?
+- ctrl+enter to submit text
+- BUG: register undo? Figma should do this?
+- BUG: update text is one revision behind? Figma's fault?
 - help text
-- persist values
-- BUG: update text is one revision behind?
+- persist state values
 - warn when no text nodes selected (count non-text nodes)
-- sort by z-order
 - dark/light theme scrollbar
 - `Parameters<Array<SceneNode>["sort"]>[0]` defined type
