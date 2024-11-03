@@ -208,7 +208,6 @@
 
   select {
     font-weight: var(--font-weight-default);
-
     background-image: var(--select-icon);
     background-position: right 4px center;
     background-repeat: no-repeat;
@@ -232,7 +231,11 @@
 
   button.primary {
     background-color: var(--figma-color-bg-brand);
+    border-color: var(--figma-color-bg-brand);
     color: var(--figma-color-text);
+  }
+  button.primary:focus{
+    border-color: var(--figma-color-border-selected-strong);
   }
   button.primary:hover {
     background-color: var(--figma-color-bg-brand-hover);
@@ -246,7 +249,8 @@
     bottom: 0;
     right: 0;
     cursor: nwse-resize;
-    padding: 4px 6px;
+    padding: 4px 0 0 4px;
     color: var(--figma-color-border);
+    transform: rotate(45deg);
   }
 </style>
