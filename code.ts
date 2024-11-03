@@ -42,6 +42,7 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
     }
 
     const textAreaLines = pluginMessage.value.split("\n").reverse();
+    
     [...figma.currentPage.selection]
       .map((node) => {
         let currentNode = node;
@@ -85,7 +86,7 @@ figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
       });
     figma.ui.postMessage({
       type: "pullText",
-      value: textAreaValue,
+      value: textAreaValue || debugTextAreaValue,
     } as PluginMessageType);
   } else if (pluginMessage.type === "startResizeWindow") {
     state.dragStart = pluginMessage.xy;
@@ -138,21 +139,30 @@ const sortNodesXYZ: Parameters<Array<SceneNode>["sort"]>[0] = (
   const { y: aY, x: aX } = nodeA.absoluteBoundingBox;
   const { y: bY, x: bX } = nodeB.absoluteBoundingBox;
 
-  const [zIA, zIB] = [nodeA, nodeB].map((node) =>
-    node
-      .getPluginData("indexTree")
-      .split(",")
-      .map((n) => parseInt(n))
-  );
-
-  console.log({ zIA, zIB });
-  // TODO: loop compare zIA, zIB
-  // const aZ = 0;
-  // const bZ = 0;
-
   const x = aX - bX;
   const y = aY - bY;
-  // const z = aZ - bZ;
+  let z = 0;
+
+  if (state.sortOrder === "z") {
+    const [zIA, zIB] = [nodeA, nodeB].map((node) =>
+      node
+        .getPluginData("indexTree")
+        .split(",")
+        .map((n) => parseInt(n))
+    );
+    while (z === 0 && zIA.length > 0 && zIB.length > 0) {
+      const zA = zIA.shift();
+      const zB = zIB.shift();
+      z = zA != null && zB != null ? zA - zB : -Infinity;
+    }
+    console.log({
+      zIA: zIA.join(","),
+      zIB: zIB.join(","),
+      a: (nodeA as TextNode).characters,
+      b: (nodeB as TextNode).characters,
+      z,
+    });
+  }
 
   switch (state.sortOrder) {
     case "x":
@@ -161,9 +171,9 @@ const sortNodesXYZ: Parameters<Array<SceneNode>["sort"]>[0] = (
     case "y":
       return y || x;
       break;
-    // case "z":
-    //   return x || y || z;
-    //   break;
+    case "z":
+      return z || y || x;
+      break;
     default:
       return 0;
   }
@@ -172,3 +182,7 @@ const sortNodesXYZ: Parameters<Array<SceneNode>["sort"]>[0] = (
 };
 
 type XY = { x: number; y: number };
+
+const debugTextAreaValue = [
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+].join("\n");

@@ -6,3 +6,4 @@
 - BUG: update text is one revision behind?
 - warn when no text nodes selected (count non-text nodes)
 - sort by z-order
+- dark/light theme scrollbar

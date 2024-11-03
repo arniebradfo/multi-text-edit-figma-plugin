@@ -82,7 +82,7 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
         });
         figma.ui.postMessage({
             type: "pullText",
-            value: textAreaValue,
+            value: textAreaValue || debugTextAreaValue,
         });
     }
     else if (pluginMessage.type === "startResizeWindow") {
@@ -121,17 +121,27 @@ const sortNodesXYZ = (nodeA, nodeB) => {
         return -1;
     const { y: aY, x: aX } = nodeA.absoluteBoundingBox;
     const { y: bY, x: bX } = nodeB.absoluteBoundingBox;
-    const [zIA, zIB] = [nodeA, nodeB].map((node) => node
-        .getPluginData("indexTree")
-        .split(",")
-        .map((n) => parseInt(n)));
-    console.log({ zIA, zIB });
-    // TODO: loop compare zIA, zIB
-    // const aZ = 0;
-    // const bZ = 0;
     const x = aX - bX;
     const y = aY - bY;
-    // const z = aZ - bZ;
+    let z = 0;
+    if (state.sortOrder === "z") {
+        const [zIA, zIB] = [nodeA, nodeB].map((node) => node
+            .getPluginData("indexTree")
+            .split(",")
+            .map((n) => parseInt(n)));
+        while (z === 0 && zIA.length > 0 && zIB.length > 0) {
+            const zA = zIA.shift();
+            const zB = zIB.shift();
+            z = zA != null && zB != null ? zA - zB : -Infinity;
+        }
+        console.log({
+            zIA: zIA.join(","),
+            zIB: zIB.join(","),
+            a: nodeA.characters,
+            b: nodeB.characters,
+            z,
+        });
+    }
     switch (state.sortOrder) {
         case "x":
             return x || y;
@@ -139,11 +149,14 @@ const sortNodesXYZ = (nodeA, nodeB) => {
         case "y":
             return y || x;
             break;
-        // case "z":
-        //   return x || y || z;
-        //   break;
+        case "z":
+            return z || y || x;
+            break;
         default:
             return 0;
     }
     // return nodeA.y - nodeB.y || nodeA.x - nodeB.x;
 };
+const debugTextAreaValue = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+].join("\n");
