@@ -1,11 +1,3 @@
-// This plugin will open a window to prompt the user to enter a number, and
-// it will then create that many rectangles on the screen.
-
-// This file holds the main code for plugins. Code in this file has access to
-// the *figma document* via the figma global object.
-// You can access browser APIs in the <script> tag inside "ui.html" which has a
-// full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
-
 const state: {
   height: number;
   width: number;
@@ -19,22 +11,15 @@ const state: {
   dragDelta: { x: 0, y: 0 },
   sortOrder: "y",
 };
-
 // TODO: persist and restore state?
 
-// This shows the HTML page in "ui.html".
 figma.showUI(__html__, {
   themeColors: true,
   height: state.height,
   width: state.width,
 });
 
-// Calls to "parent.postMessage" from within the HTML page will trigger this
-// callback. The callback will be passed the "pluginMessage" property of the
-// posted message.
 figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
-  // One way of distinguishing between different types of messages sent from
-  // your HTML page is to use an object with a "type" property like this.
   if (pluginMessage.type === "editText") {
     if (figma.currentPage.selection.length === 0) {
       figma.notify("Select text elements to Update Text");
@@ -106,17 +91,6 @@ figma.ui.postMessage({
   value: state.sortOrder,
 } as PluginMessageType);
 
-type SortOrder = "x" | "y" | "z";
-
-type PluginMessageType =
-  | { type: "editText"; value: string }
-  | { type: "pullText"; value: string }
-  | { type: "updateSort"; value: SortOrder }
-  | { type: "notify"; value: string }
-  | { type: "endResizeWindow"; xy: XY }
-  | { type: "startResizeWindow"; xy: XY }
-  | { type: "resizeWindow"; xy: XY };
-
 const sortNodesXYZ: Parameters<Array<SceneNode>["sort"]>[0] = (
   nodeA,
   nodeB
@@ -143,12 +117,6 @@ const sortNodesXYZ: Parameters<Array<SceneNode>["sort"]>[0] = (
       return 0;
   }
 };
-
-type XY = { x: number; y: number };
-
-const debugTextAreaValue = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-].join("\n");
 
 const indexTreeKey = "indexTree";
 
@@ -208,3 +176,20 @@ const sortNodesZ: Parameters<Array<SceneNode>["sort"]>[0] = (nodeA, nodeB) => {
 
   return z;
 };
+
+const debugTextAreaValue = [
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+].join("\n");
+
+type SortOrder = "x" | "y" | "z";
+
+type XY = { x: number; y: number };
+
+type PluginMessageType =
+  | { type: "editText"; value: string }
+  | { type: "pullText"; value: string }
+  | { type: "updateSort"; value: SortOrder }
+  | { type: "notify"; value: string }
+  | { type: "endResizeWindow"; xy: XY }
+  | { type: "startResizeWindow"; xy: XY }
+  | { type: "resizeWindow"; xy: XY };

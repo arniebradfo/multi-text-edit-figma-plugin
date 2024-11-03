@@ -1,6 +1,4 @@
 "use strict";
-// This plugin will open a window to prompt the user to enter a number, and
-// it will then create that many rectangles on the screen.
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -10,10 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// This file holds the main code for plugins. Code in this file has access to
-// the *figma document* via the figma global object.
-// You can access browser APIs in the <script> tag inside "ui.html" which has a
-// full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
 const state = {
     height: 360,
     width: 360,
@@ -22,18 +16,12 @@ const state = {
     sortOrder: "y",
 };
 // TODO: persist and restore state?
-// This shows the HTML page in "ui.html".
 figma.showUI(__html__, {
     themeColors: true,
     height: state.height,
     width: state.width,
 });
-// Calls to "parent.postMessage" from within the HTML page will trigger this
-// callback. The callback will be passed the "pluginMessage" property of the
-// posted message.
 figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, function* () {
-    // One way of distinguishing between different types of messages sent from
-    // your HTML page is to use an object with a "type" property like this.
     if (pluginMessage.type === "editText") {
         if (figma.currentPage.selection.length === 0) {
             figma.notify("Select text elements to Update Text");
@@ -124,9 +112,6 @@ const sortNodesXYZ = (nodeA, nodeB) => {
             return 0;
     }
 };
-const debugTextAreaValue = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-].join("\n");
 const indexTreeKey = "indexTree";
 const deleteNodeIndexTree = (node) => {
     node.setPluginData(indexTreeKey, "");
@@ -175,3 +160,6 @@ const sortNodesZ = (nodeA, nodeB) => {
     }); */
     return z;
 };
+const debugTextAreaValue = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+].join("\n");
