@@ -35,7 +35,7 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
         [...figma.currentPage.selection]
             .sort(sortNodesXYZ)
             .forEach((node) => __awaiter(void 0, void 0, void 0, function* () {
-            deleteNodeIndexTree(node);
+            deleteNodeZIndexTree(node);
             if (node.type === "TEXT" && textAreaLines.length > 0) {
                 const textAreaLine = textAreaLines.pop();
                 if (textAreaLine) {
@@ -57,7 +57,7 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
         [...figma.currentPage.selection]
             .sort(sortNodesXYZ) //
             .forEach((node) => {
-            deleteNodeIndexTree(node);
+            deleteNodeZIndexTree(node);
             if (node.type === "TEXT") {
                 // || node.type === 'SHAPE_WITH_TEXT')
                 textAreaValue += node.characters + "\n";
@@ -110,47 +110,49 @@ const sortNodesXYZ = (nodeA, nodeB) => {
         case "y":
             return y || x;
         case "z":
-            z = sortNodesZ ? sortNodesZ(nodeA, nodeB) : 0;
+            z = sortNodesZ(nodeA, nodeB);
             return z || y || x;
+        // should never fallback to x or y, right?
+        // how could 2 nodes ever have the same zIndexTree?
         default:
             return 0;
     }
 };
-const indexTreeKey = "indexTree";
-const deleteNodeIndexTree = (node) => {
-    node.setPluginData(indexTreeKey, "");
+const zIndexTreeKey = "zIndexTree";
+const deleteNodeZIndexTree = (node) => {
+    node.setPluginData(zIndexTreeKey, "");
 };
-const getNodeIndexTree = (node) => {
-    let data = node.getPluginData(indexTreeKey);
+const getNodeZIndexTree = (node) => {
+    let data = node.getPluginData(zIndexTreeKey);
     if (data === "") {
-        data = setNodeIndexTree(node);
+        data = setNodeZIndexTree(node);
     }
     return data.split(",").map((n) => parseInt(n));
 };
 /**
- * sets pluginData of "indexTree" for Layer Order z index sorting
+ * sets pluginData of "zIndexTree" for Layer Order z index sorting
  * - data is array of index position in parent, starting with node and moving up to root node
  * - ex: [nodeIndexInParent, parentIndexInGrandparent, ..., ancestorIndexInRootNode]
  */
-const setNodeIndexTree = (node) => {
+const setNodeZIndexTree = (node) => {
     let currentNode = node;
-    const indexTree = [];
+    const zIndexTree = [];
     while (currentNode.parent != null) {
         const index = currentNode.parent.children.indexOf(currentNode);
-        indexTree.push(index);
+        zIndexTree.push(index);
         currentNode = currentNode.parent;
     }
-    const value = indexTree.join(",");
-    node.setPluginData(indexTreeKey, value);
+    const value = zIndexTree.join(",");
+    node.setPluginData(zIndexTreeKey, value);
     return value;
 };
 const sortNodesZ = (nodeA, nodeB) => {
     let z = 0;
-    let [zIA, zIB] = [nodeA, nodeB].map(getNodeIndexTree);
+    let [zIA, zIB] = [nodeA, nodeB].map(getNodeZIndexTree);
     const minLength = Math.min(zIA.length, zIB.length);
     [zIA, zIB] = [zIA, zIB].map((node) => node.slice(-minLength));
     while (z === 0 && zIA.length > 0 && zIB.length > 0) {
-        //.pop() is never undefined because length is checked in while()
+        // zI.pop() is never undefined because length is checked in while()
         const zA = zIA.pop();
         const zB = zIB.pop();
         z = zA - zB;
