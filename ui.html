@@ -77,11 +77,15 @@
 
 <style>
   :root {
+
+    /* vars ripped from Figma App CSS */
+
     --font-family-default: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, SFProLocalRange;
     --font-family-display: Whyte, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     --font-family-mono: "Roboto Mono", Monaco, "Courier New", monospace;
     --font-weight-default: 450;
     --font-weight-strong: 550;
+
     /* }  [data-fpl-version=ui3] { */
     --radius-full: 9999px;
     --radius-large: .8125rem;
@@ -109,10 +113,12 @@
   }
 
   .figma-dark {
+    color-scheme: dark;
     --select-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='16' height='16' fill='none' viewBox='0 0 16 16'><path fill='white' fill-rule='evenodd' d='M10.475 6.768a.5.5 0 0 1 0 .707L8.354 9.596 8 9.95l-.354-.354-2.12-2.121a.5.5 0 0 1 .706-.707L8 8.536l1.768-1.768a.5.5 0 0 1 .707 0' clip-rule='evenodd'></path></svg>");
   }
 
   .figma-light {
+    color-scheme: light;
     --select-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='16' height='16' fill='none' viewBox='0 0 16 16'><path fill='black' fill-rule='evenodd' d='M10.475 6.768a.5.5 0 0 1 0 .707L8.354 9.596 8 9.95l-.354-.354-2.12-2.121a.5.5 0 0 1 .706-.707L8 8.536l1.768-1.768a.5.5 0 0 1 .707 0' clip-rule='evenodd'></path></svg>");
   }
 
@@ -124,7 +130,7 @@
     width: 100%;
     padding: 0;
     margin: 0;
-
+    background-color: var(--figma-color-bg);
   }
 
   #root {
