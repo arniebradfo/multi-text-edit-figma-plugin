@@ -24,7 +24,7 @@ figma.showUI(__html__, {
 figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, function* () {
     if (pluginMessage.type === "editText") {
         if (figma.currentPage.selection.length === 0) {
-            figma.notify("Select text elements to Update Text");
+            figma.notify("Select text elements to 'Update Text'");
             return;
         }
         const textAreaLines = pluginMessage.value
@@ -51,7 +51,7 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
     else if (pluginMessage.type === "pullText") {
         let textAreaValue = "";
         if (figma.currentPage.selection.length === 0) {
-            figma.notify("Select text elements to Pull Text from");
+            figma.notify("Select text elements to 'Pull Text' from");
             return;
         }
         [...figma.currentPage.selection]
@@ -63,9 +63,14 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
                 textAreaValue += node.characters + "\n";
             }
         });
+        textAreaValue = textAreaValue.trim();
+        if (!textAreaValue) {
+            figma.notify("Select text elements to 'Pull Text' from");
+            return;
+        }
         figma.ui.postMessage({
             type: "pullText",
-            value: textAreaValue.trim() || debugTextAreaValue,
+            value: textAreaValue.trim(),
         });
     }
     else if (pluginMessage.type === "startResizeWindow") {
@@ -166,6 +171,3 @@ const sortNodesZ = (nodeA, nodeB) => {
     }); */
     return z;
 };
-const debugTextAreaValue = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-].join("\n");
