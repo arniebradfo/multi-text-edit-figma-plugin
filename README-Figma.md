@@ -16,4 +16,4 @@ Very helpful for bulk text editing, or ask an LLM for a list of dummy content to
 
 Similar to [Multiple Text Editor](https://www.figma.com/community/plugin/1314354601837162016)'s "List to Layers" functionality, but with more sorting options. You might try this other plugin if you'd like to generate random content for text elements in a similar way.
 
-[Github Repo]([github.com/arniebradfo/repeat-as-list-figma-plugin](https://github.com/arniebradfo/multi-text-edit-figma-plugin))
+[Github Repo](https://github.com/arniebradfo/multi-text-edit-figma-plugin)

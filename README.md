@@ -3,7 +3,7 @@
 # Multi Text Editor - Figma Plugin
 Edit multiple text elements in a single text editor
 
-[Figma Plugin Page](https://www.figma.com/community/plugin/0000)
+[Figma Plugin Page](https://www.figma.com/community/plugin/1430752760757770874/multi-text-edit)
 
 ![Icon](./assets/Icon.svg)
 
