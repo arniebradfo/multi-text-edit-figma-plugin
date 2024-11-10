@@ -15,7 +15,6 @@ Edit multiple text elements in a single text editor
 - Button: help text
   - Write in Readme
   - Add HTML version
-- persist state values
 
 ## BUGS?
 - Register undo? Figma should do this?
