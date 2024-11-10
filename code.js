@@ -11,6 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 function initialize() {
     return __awaiter(this, void 0, void 0, function* () {
         const stateKey = "MultiTextEditorState";
+        const minSize = 200;
+        const notifyErrorOptions = {
+            error: true,
+            timeout: 3000,
+        };
         const state = (yield figma.clientStorage.getAsync(stateKey)) ||
             {
                 height: 360,
@@ -22,7 +27,7 @@ function initialize() {
         const saveState = () => __awaiter(this, void 0, void 0, function* () {
             figma.clientStorage.setAsync(stateKey, state);
         });
-        saveState();
+        yield saveState();
         figma.showUI(__html__, {
             themeColors: true,
             height: state.height,
@@ -35,17 +40,11 @@ function initialize() {
         figma.ui.onmessage = (pluginMessage) => __awaiter(this, void 0, void 0, function* () {
             if (pluginMessage.type === "editText") {
                 if (figma.currentPage.selection.length === 0) {
-                    figma.notify("Select text elements to 'Update Text' 1", {
-                        error: true,
-                        timeout: 3000,
-                    });
+                    figma.notify("Select text elements to 'Update Text' 1", notifyErrorOptions);
                     return;
                 }
                 if (!pluginMessage.value.trim()) {
-                    figma.notify("Type text into the text editor to 'Update Text'", {
-                        error: true,
-                        timeout: 3000,
-                    });
+                    figma.notify("Type text into the text editor to 'Update Text'", notifyErrorOptions);
                     return;
                 }
                 const textAreaLines = pluginMessage.value
@@ -72,10 +71,7 @@ function initialize() {
                 }));
                 /* if (noTextWasEdited) {
                   // doesn't work because forEach is async
-                  figma.notify("Select text elements to 'Update Text'", {
-                    error: true,
-                    timeout: 3000,
-                  });
+                  figma.notify("Select text elements to 'Update Text'", notifyErrorOptions);
                   return;
                 } */
             }
@@ -99,10 +95,7 @@ function initialize() {
                 });
                 textAreaValue = textAreaValue.trim();
                 if (!textAreaValue) {
-                    figma.notify("Select text elements to 'Pull Text' from", {
-                        error: true,
-                        timeout: 3000,
-                    });
+                    figma.notify("Select text elements to 'Pull Text' from", notifyErrorOptions);
                     return;
                 }
                 figma.ui.postMessage({
@@ -119,16 +112,16 @@ function initialize() {
                     x: x - state.dragStart.x,
                     y: y - state.dragStart.y,
                 };
-                figma.ui.resize(state.width + state.dragDelta.x, state.height + state.dragDelta.y);
+                figma.ui.resize(Math.max(state.width + state.dragDelta.x, minSize), Math.max(state.height + state.dragDelta.y, minSize));
             }
             else if (pluginMessage.type === "endResizeWindow") {
-                state.width = state.width + state.dragDelta.x;
-                state.height = state.height + state.dragDelta.y;
-                saveState();
+                state.width = Math.max(state.width + state.dragDelta.x, minSize);
+                state.height = Math.max(state.height + state.dragDelta.y, minSize);
+                yield saveState();
             }
             else if (pluginMessage.type === "updateSort") {
                 state.sortOrder = pluginMessage.value;
-                saveState();
+                yield saveState();
             }
             else if (pluginMessage.type === "notify") {
                 figma.notify(pluginMessage.value);
