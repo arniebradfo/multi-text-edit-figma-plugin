@@ -52,10 +52,10 @@ function initialize() {
                     .split("\n")
                     .map((s) => s || " ") // empty line becomes empty text element, not skip...
                     .reverse();
-                // let noTextWasEdited = true;
-                [...figma.currentPage.selection]
+                let noTextWasEdited = true;
+                yield Promise.all([...figma.currentPage.selection]
                     .sort(sortNodesXYZ)
-                    .forEach((node) => __awaiter(this, void 0, void 0, function* () {
+                    .map((node) => __awaiter(this, void 0, void 0, function* () {
                     deleteNodeZIndexTree(node);
                     if (node.type === "TEXT" && textAreaLines.length > 0) {
                         const textAreaLine = textAreaLines.pop();
@@ -65,15 +65,14 @@ function initialize() {
                                 .map(figma.loadFontAsync));
                             // Setting this property requires the font the be loaded.
                             node.characters = textAreaLine;
-                            // noTextWasEdited = false; // a text node was edited
+                            noTextWasEdited = false; // a text node was edited
                         }
                     }
-                }));
-                /* if (noTextWasEdited) {
-                  // doesn't work because forEach is async
-                  figma.notify("Select text elements to 'Update Text'", notifyErrorOptions);
-                  return;
-                } */
+                })));
+                if (noTextWasEdited) {
+                    figma.notify("Select text elements to 'Update Text'", notifyErrorOptions);
+                    return;
+                }
             }
             else if (pluginMessage.type === "pullText") {
                 let textAreaValue = "";

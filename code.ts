@@ -58,32 +58,36 @@ async function initialize() {
         .map((s) => s || " ") // empty line becomes empty text element, not skip...
         .reverse();
 
-      // let noTextWasEdited = true;
+      let noTextWasEdited = true;
 
-      [...figma.currentPage.selection]
-        .sort(sortNodesXYZ)
-        .forEach(async (node) => {
-          deleteNodeZIndexTree(node);
-          if (node.type === "TEXT" && textAreaLines.length > 0) {
-            const textAreaLine = textAreaLines.pop();
-            if (textAreaLine) {
-              await Promise.all(
-                node
-                  .getRangeAllFontNames(0, node.characters.length)
-                  .map(figma.loadFontAsync)
-              );
-              // Setting this property requires the font the be loaded.
-              node.characters = textAreaLine;
-              // noTextWasEdited = false; // a text node was edited
+      await Promise.all(
+        [...figma.currentPage.selection]
+          .sort(sortNodesXYZ)
+          .map(async (node) => {
+            deleteNodeZIndexTree(node);
+            if (node.type === "TEXT" && textAreaLines.length > 0) {
+              const textAreaLine = textAreaLines.pop();
+              if (textAreaLine) {
+                await Promise.all(
+                  node
+                    .getRangeAllFontNames(0, node.characters.length)
+                    .map(figma.loadFontAsync)
+                );
+                // Setting this property requires the font the be loaded.
+                node.characters = textAreaLine;
+                noTextWasEdited = false; // a text node was edited
+              }
             }
-          }
-        });
+          })
+      );
 
-      /* if (noTextWasEdited) { 
-        // doesn't work because forEach is async
-        figma.notify("Select text elements to 'Update Text'", notifyErrorOptions);
+      if (noTextWasEdited) {
+        figma.notify(
+          "Select text elements to 'Update Text'",
+          notifyErrorOptions
+        );
         return;
-      } */
+      }
     } else if (pluginMessage.type === "pullText") {
       let textAreaValue = "";
 
