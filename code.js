@@ -24,7 +24,17 @@ figma.showUI(__html__, {
 figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, function* () {
     if (pluginMessage.type === "editText") {
         if (figma.currentPage.selection.length === 0) {
-            figma.notify("Select text elements to 'Update Text'");
+            figma.notify("Select text elements to 'Update Text' 1", {
+                error: true,
+                timeout: 3000,
+            });
+            return;
+        }
+        if (!pluginMessage.value.trim()) {
+            figma.notify("Type text into the text editor to 'Update Text'", {
+                error: true,
+                timeout: 3000,
+            });
             return;
         }
         const textAreaLines = pluginMessage.value
@@ -32,6 +42,7 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
             .split("\n")
             .map((s) => s || " ") // empty line becomes empty text element, not skip...
             .reverse();
+        // let noTextWasEdited = true;
         [...figma.currentPage.selection]
             .sort(sortNodesXYZ)
             .forEach((node) => __awaiter(void 0, void 0, void 0, function* () {
@@ -44,14 +55,26 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
                         .map(figma.loadFontAsync));
                     // Setting this property requires the font the be loaded.
                     node.characters = textAreaLine;
+                    // noTextWasEdited = false; // a text node was edited
                 }
             }
         }));
+        /* if (noTextWasEdited) {
+        // doesn't work because forEach is async
+          figma.notify("Select text elements to 'Update Text'", {
+            error: true,
+            timeout: 3000,
+          });
+          return;
+        } */
     }
     else if (pluginMessage.type === "pullText") {
         let textAreaValue = "";
         if (figma.currentPage.selection.length === 0) {
-            figma.notify("Select text elements to 'Pull Text' from");
+            figma.notify("Select text elements to 'Pull Text' from", {
+                error: true,
+                timeout: 3000,
+            });
             return;
         }
         [...figma.currentPage.selection]
@@ -65,7 +88,10 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(void 0, void 0, void 0, functi
         });
         textAreaValue = textAreaValue.trim();
         if (!textAreaValue) {
-            figma.notify("Select text elements to 'Pull Text' from");
+            figma.notify("Select text elements to 'Pull Text' from", {
+                error: true,
+                timeout: 3000,
+            });
             return;
         }
         figma.ui.postMessage({
