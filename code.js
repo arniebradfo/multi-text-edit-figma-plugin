@@ -123,9 +123,6 @@ function initialize() {
                 state.sortOrder = pluginMessage.value;
                 yield saveState();
             }
-            else if (pluginMessage.type === "notify") {
-                figma.notify(pluginMessage.value);
-            }
         });
         const sortNodesXYZ = (nodeA, nodeB) => {
             if (nodeA.absoluteBoundingBox == null)

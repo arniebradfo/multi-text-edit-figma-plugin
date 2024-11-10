@@ -1,11 +1,11 @@
 async function initialize() {
   const stateKey = "MultiTextEditorState";
-  const minSize = 200
-  
+  const minSize = 200;
+
   const notifyErrorOptions = {
     error: true,
     timeout: 3000,
-  }
+  };
 
   const state =
     (await figma.clientStorage.getAsync(stateKey)) ||
@@ -37,12 +37,18 @@ async function initialize() {
   figma.ui.onmessage = async (pluginMessage: PluginMessageType) => {
     if (pluginMessage.type === "editText") {
       if (figma.currentPage.selection.length === 0) {
-        figma.notify("Select text elements to 'Update Text' 1", notifyErrorOptions);
+        figma.notify(
+          "Select text elements to 'Update Text' 1",
+          notifyErrorOptions
+        );
         return;
       }
 
       if (!pluginMessage.value.trim()) {
-        figma.notify("Type text into the text editor to 'Update Text'", notifyErrorOptions);
+        figma.notify(
+          "Type text into the text editor to 'Update Text'",
+          notifyErrorOptions
+        );
         return;
       }
 
@@ -101,7 +107,10 @@ async function initialize() {
       textAreaValue = textAreaValue.trim();
 
       if (!textAreaValue) {
-        figma.notify("Select text elements to 'Pull Text' from", notifyErrorOptions);
+        figma.notify(
+          "Select text elements to 'Pull Text' from",
+          notifyErrorOptions
+        );
         return;
       }
 
@@ -128,8 +137,6 @@ async function initialize() {
     } else if (pluginMessage.type === "updateSort") {
       state.sortOrder = pluginMessage.value;
       await saveState();
-    } else if (pluginMessage.type === "notify") {
-      figma.notify(pluginMessage.value);
     }
   };
 
@@ -218,7 +225,6 @@ async function initialize() {
     | { type: "editText"; value: string }
     | { type: "pullText"; value: string }
     | { type: "updateSort"; value: SortOrder }
-    | { type: "notify"; value: string }
     | { type: "endResizeWindow"; xy: XY }
     | { type: "startResizeWindow"; xy: XY }
     | { type: "resizeWindow"; xy: XY };
