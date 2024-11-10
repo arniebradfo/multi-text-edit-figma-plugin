@@ -178,20 +178,8 @@ const sortNodesZ: ArraySortSceneNode = (nodeA, nodeB) => {
     z = zA - zB;
   }
 
-  /* console.log({
-    zIA: zIA.join(","),
-    zIB: zIB.join(","),
-    a: (nodeA as TextNode).characters,
-    b: (nodeB as TextNode).characters,
-    z,
-  }); */
-
   return z;
 };
-
-// const debugTextAreaValue = [
-//   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-// ].join("\n");
 
 type SortOrder = "x" | "y" | "z";
 

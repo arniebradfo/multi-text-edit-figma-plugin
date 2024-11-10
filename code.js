@@ -162,12 +162,5 @@ const sortNodesZ = (nodeA, nodeB) => {
         const zB = zIB.pop();
         z = zA - zB;
     }
-    /* console.log({
-      zIA: zIA.join(","),
-      zIB: zIB.join(","),
-      a: (nodeA as TextNode).characters,
-      b: (nodeB as TextNode).characters,
-      z,
-    }); */
     return z;
 };
