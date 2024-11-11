@@ -10,7 +10,7 @@ Edit multiple text elements in a single text editor
 ---
 
 ## TODOs
-- ctrl+enter to submit text
+- Icons
 - Button: Select Text Node Children elements
 - Button: help text
   - Write in Readme

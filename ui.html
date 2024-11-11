@@ -23,11 +23,17 @@
 
   textArea.placeholder = 'Lorem\nIpsum\nAmet\nDolor'
 
-  editButton.onclick = () => {
+  const updateText = () => {
     parent.postMessage({ pluginMessage: { type: 'editText', value: textArea.value } }, '*')
   }
 
-  // ctrl+return to submit
+  textArea.onkeydown = () => {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) { 
+      updateText() 
+    }
+  }
+
+  editButton.onclick = updateText
 
   pullButton.onclick = () => {
     parent.postMessage({ pluginMessage: { type: 'pullText', value: textArea.value } }, '*')
@@ -240,12 +246,15 @@
     border-color: var(--figma-color-bg-brand);
     color: var(--figma-color-text);
   }
-  button.primary:focus{
+
+  button.primary:focus {
     border-color: var(--figma-color-border-selected-strong);
   }
+
   button.primary:hover {
     background-color: var(--figma-color-bg-brand-hover);
   }
+
   button.primary:active {
     background-color: var(--figma-color-bg-brand-pressed);
   }
