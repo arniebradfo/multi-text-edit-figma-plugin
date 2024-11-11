@@ -5,7 +5,7 @@ Very helpful for bulk text editing, or ask an LLM for a list of dummy content to
 **Docs**
 - **Update Text** - each line of the text editor a selected text node in the selected 'Order'
   - An *empty line* fils the corresponding text node with an empty space.
-  <!-- - Press `Cmd+Enter`/`Ctrl+Enter` while in the typing in the text editor to 'Update Text' -->
+  - Press `Cmd+Enter`/`Ctrl+Enter` while in the typing in the text editor to 'Update Text'
 - **Pull Text** - fills the text editor with the content of the selected text elements, so you can edit existing text and update it. 
 <!-- - **Select Text** - selects all the text element children of your current selection -->
 - **Order** options:
